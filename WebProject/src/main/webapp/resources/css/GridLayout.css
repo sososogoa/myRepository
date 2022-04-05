@@ -1,0 +1,165 @@
+/* menuResultTest.jsp 레이아웃 */
+.menu-grid {
+	width: 660px;
+	display: grid;
+	grid-template-columns: 200px 400px 60px;
+	grid-template-rows: 80px 140px 40px;
+}
+
+.menuImg {
+	width: 250px;
+	grid-column: 1;
+	grid-row: 1/4;
+}
+
+.menuTitle {
+	width: 400px;
+	grid-column: 2;
+	grid-row: 1/2;
+}
+
+.menuDescription {
+	width: 400px;
+	grid-column: 2/3;
+	grid-row: 2/3;
+}
+
+.menuReview {
+	grid-column: 3;
+	grid-row: 3;
+}
+
+.layout {
+	max-width: 100%;
+	margin: 0 auto;
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 1em;
+}
+
+aside {
+	flex-basis: 400px;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+article {
+	flex-basis: auto;
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+
+.flexbox {
+	width:700px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1em;
+}
+
+.item {
+	min-height: 150px;
+	flex-basis: auto;
+	flex-shrink: 1;
+	flex-grow: 1;
+}
+
+.mainMenuGrid {
+	display: grid;
+	grid-template-columns: 300px 300px 300px;
+	grid-gap: 15px;
+	grid-template-rows: 100px repeat(3, 230px);
+	grid-auto-flow: row;
+}
+
+.mainMenuGridText {
+	grid-column: 1/4;
+	grid-row: 1;
+}
+
+
+
+.insertGrid {
+  display: grid;
+  grid-template-columns: 300px 350px;
+  grid-template-rows: 200px auto auto;
+  grid-gap:16px;
+}
+
+.one {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+.two {
+	grid-column: 1/2;
+	grid-row: 2;
+}
+
+.three {
+	grid-column: 1;
+	grid-row: 4;
+}
+
+.four {
+	grid-column:1;
+	grid-row: 3;
+}
+
+.five {
+	grid-column:2;
+	grid-row: 3;
+}
+
+.noticeGrid {
+  display: grid;
+  grid-template-columns: 300px 350px;
+  grid-template-rows: 40px auto auto;
+  grid-gap:16px;
+}
+
+.inputWidth {
+	width:320px;
+}
+
+
+/* menu.jsp Grid */
+.m-Grid {
+	width: 1500px;
+	display: grid;
+	grid-gap:16px;
+	grid-template-columns: 750px 750px;
+	grid-template-rows: 566px;
+}
+
+.m-Grid-Search {
+	grid-column:1;
+	grid-row: 1;
+}
+
+.m-Grid-Rank {
+	grid-column:2;
+	grid-row: 1;	
+}
+
+.m-Div {
+	width:1600px;
+	display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.b-Div {
+	width:100%;
+	display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+
+/* review.jsp Grid */
+.review-Grid {
+  display: grid;
+  grid-template-columns: 300px 350px;
+  grid-template-rows: 100px auto auto;
+  grid-gap:16px;
+}

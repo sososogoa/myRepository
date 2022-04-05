@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hungpick.dao.IDaoQuestion"> <!-- "<" 는 문법오류나서  "<![CDATA[ < ]]>" 이렇게 해야한다. -->
+
+	<select id="sltOne" parameterType="String" resultMap="QuestionVoRm">
+			SELECT q.MEMBER_CODE, q.QSTN_CODE, q.QSTN_TITLE, q.QSTN_CONTENT, TO_CHAR(q.QSTN_DATE,'YYYY"년" MM"월" DD"일" HH24"시" MI"분"') AS QSTN_DATE,
+			q.QSTN_CONFIRM , q.QSTN_IMG,
+			m.MEMBER_CODE, m.MEMBER_ID, m. MEMBER_PW, m.MEMBER_NAME, m.MEMBER_NICKNAME
+			FROM QUESTION q
+			join members m
+			on q.member_Code = m.member_Code
+			WHERE q.MEMBER_CODE = #{ memberCode } AND
+			q.QSTN_CODE = #{ qstnCode  } 
+	</select>
+	
+	<select id="answerCount" resultType="int" parameterType="String">
+	<![CDATA[
+		SELECT COUNT(QSTN_CODE)
+		  FROM QUESTION
+		 WHERE QSTN_CODE > 0 
+	]]>
+	</select>
+	
+	<select id="listCount" resultType="int" parameterType="String">
+	<![CDATA[
+		SELECT COUNT(QSTN_CODE)
+		  FROM QUESTION
+		 WHERE QSTN_CODE > 0 
+		 AND 
+		 MEMBER_CODE = #{ memberCode }
+	]]>
+	</select>
+	
+	
+	<resultMap type="memberDto" id="memberDtoRm">
+	<id column="MEMBER_CODE" property="memberCode"/>
+    <result column="MEMBER_ID" property="memberId"/>
+    <result column="MEMBER_PW" property="memberPw"/>
+    <result column="MEMBER_NAME" property="memberName"/>
+    <result column="MEMBER_NICKNAME" property="memberNickname"/>
+    <result column="MEMBER_EMAIL" property="memberEmail"/>
+    <result column="MEMBER_NUMBER" property="memberNumber"/>
+     <result column="MEMBER_DATE" property="memberDate"/>
+      <result column="HOLD_POINT" property="holdPoint"/>
+	</resultMap>
+ 
+	<resultMap type="qesDto" id="QuestionRm">
+	<id column="Member_Code" property="memberCode"/>
+	<id column="QSTN_CODE" property="qstnCode"/>
+    <result column="QSTN_TITLE" property="qstnTitle"/>
+    <result column="QSTN_CONTENT" property="qstnContent"/>
+    <result column="QSTN_DATE" property="qstnDate"/>
+    <result column="QSTN_CONFIRM" property="qstnConfirm"/>
+	<result column="QSTN_IMG" property="qstnImg"/>
+	</resultMap>
+	
+	<resultMap type="questionVo" id="QuestionVoRm">
+		<collection property="memberDto" resultMap="memberDtoRm"></collection >
+        <collection property="qesDto" resultMap="QuestionRm"></collection >
+	</resultMap>
+	
+	<select id="listPage" resultMap="QuestionVoRm" parameterType="map">
+		SELECT  * FROM (   
+		SELECT   ROW_NUMBER() OVER(ORDER BY TO_NUMBER(QSTN_CODE) DESC)
+		 NUM, A.MEMBER_CODE,A.QSTN_CODE,A.QSTN_TITLE,A.QSTN_CONTENT,TO_CHAR(A.QSTN_DATE,'YYYY"년" MM"월" DD"일" HH24"시" MI"분"') AS QSTN_DATE,A.QSTN_CONFIRM,A.QSTN_IMG
+		 ,M.MEMBER_NAME FROM QUESTION A 
+        JOIN MEMBERS M
+        ON A.MEMBER_CODE = M.MEMBER_CODE
+        ORDER BY TO_NUMBER(QSTN_CODE) DESC)  
+		WHERE NUM BETWEEN #{ cri.rowStart }
+		AND #{ cri.rowEnd } 
+		AND MEMBER_CODE = #{ memberCode }
+		ORDER BY TO_NUMBER(QSTN_CODE) DESC
+	</select>
+	
+	<select id="OneMemberCode" resultType="qesDto" parameterType="String">
+		SELECT * FROM QUESTION WHERE MEMBER_CODE = #{memberCode}
+	</select>
+	
+	<select id="MemberCode" resultType="qesDto" parameterType="String">
+		SELECT  DISTINCT MEMBER_CODE FROM QUESTION WHERE MEMBER_CODE = #{ memberCode }
+	</select>
+	
+	<select id="selectN" resultType="qesDto" parameterType="Criteria">
+		SELECT *  FROM (SELECT ROW_NUMBER() OVER (ORDER BY QSTN_CODE DESC) 
+		NUM, A.* FROM QUESTION A ORDER BY QSTN_CODE DESC)
+		WHERE NUM BETWEEN #{rowStart} AND #{rowEnd}
+		AND QSTN_CONFIRM = '미답변'
+		ORDER BY TO_NUMBER(QSTN_CODE) DESC
+	</select>
+	
+	 <!-- 게시판 글 작성 -->
+   <insert id="insert" parameterType="qesDto">
+	   INSERT  INTO QUESTION       
+	                 VALUES(   #{ memberCode} ,  (SELECT NVL(MAX(TO_NUMBER(QSTN_CODE)),0)+1 FROM QUESTION) 
+	                  , #{ qstnTitle } , #{ qstnContent }, TO_DATE( #{ qstnDate } ,'YYYY-MM-DD HH24:MI') ,  #{ qstnConfirm } , #{qstnImg} )
+   </insert>
+	
+	<update id="update" parameterType="qesDto">
+		UPDATE QUESTION SET QSTN_TITLE = #{ qstnTitle }, QSTN_CONTENT = #{ qstnContent } , QSTN_DATE = TO_DATE( #{qstnDate} ,'YYYY-MM-DD HH24:MI:SS') , QSTN_IMG = #{qstnImg} WHERE MEMBER_CODE = #{ memberCode } AND QSTN_CODE = #{ qstnCode }  
+	</update>
+	
+	
+	<update id="updateanswer" parameterType="qesDto">
+		UPDATE QUESTION SET   QSTN_CONFIRM = '답변' WHERE MEMBER_CODE = #{ memberCode } AND QSTN_CODE = #{ qstnCode }  
+	</update>
+
+	<delete id="delete">
+		DELETE FROM QUESTION WHERE MEMBER_CODE = #{memberCode } AND QSTN_CODE = #{ qstnCode }
+	</delete>
+
+</mapper>

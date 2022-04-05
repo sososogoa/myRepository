@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hungpick.dao.IUserDao">
+
+	<!-- 단건조회 -->
+	<select id="sltSearch" resultType="userDto">
+		SELECT * FROM MEMBERS WHERE MEMBER_CODE = #{memberCode}
+	</select>
+
+	<!-- 다건조회 -->
+	<select id="sltMulti" resultType="userDto">
+		SELECT 
+			LPAD(MEMBER_CODE, 5, '0') AS MEMBER_CODE,
+			MEMBER_ID, 
+			MEMBER_PW,
+			MEMBER_NAME, 
+			MEMBER_NICKNAME, 
+			MEMBER_EMAIL, 
+			MEMBER_NUMBER, 
+			TO_CHAR(MEMBER_DATE,'YYYY"년" MM"월" DD"일" HH24"시" MI"분"') AS MEMBER_DATE,
+			HOLD_POINT 
+		FROM MEMBERS ORDER BY TO_NUMBER(MEMBER_CODE)
+	</select>
+	
+	<!-- 로그인 -->
+	<select id="userLogin" resultType="userDto">
+		SELECT
+			MEMBER_CODE,
+			MEMBER_ID, 
+			MEMBER_PW,
+			MEMBER_NAME, 
+			MEMBER_NICKNAME, 
+			MEMBER_EMAIL, 
+			MEMBER_NUMBER, 
+			TO_CHAR(MEMBER_DATE,'YYYY"년" MM"월" DD"일" HH24"시" MI"분"') AS MEMBER_DATE,
+			HOLD_POINT 
+		FROM MEMBERS WHERE MEMBER_ID = #{memberId} AND MEMBER_PW = #{memberPw}
+	</select>
+	
+	<!-- 회원가입 -->
+	<insert id="registMember" parameterType="userDto">
+		INSERT INTO MEMBERS 
+		(
+		MEMBER_CODE, MEMBER_ID, MEMBER_PW,
+		MEMBER_NAME, MEMBER_NICKNAME, MEMBER_EMAIL,
+		MEMBER_NUMBER, MEMBER_DATE, HOLD_POINT
+		)
+		VALUES 
+		( 
+			(SELECT NVL(MAX(TO_NUMBER(MEMBER_CODE)),0)+1 FROM MEMBERS),
+			#{memberId},
+			#{memberPw},
+			#{memberName},
+			#{memberNickname},
+			#{memberEmail},
+			#{memberNumber},
+			SYSDATE,
+			'0'
+		)
+	</insert>
+	
+	<!-- PW 검사 -->
+<!-- 	<select id="checkPw" resultType="userDto">
+		SELECT * FROM MEMBERS WHERE MEMBER_PW = #{memberPw}
+	</select> -->
+
+	<!-- ID 중복조회 -->
+	<select id="checkId" resultType="String">
+		SELECT COUNT(*) FROM MEMBERS WHERE MEMBER_ID = #{memberId}
+	</select>
+	
+	<!-- 닉네임 중복조회 -->
+	<select id="checkNickname" resultType="String">
+		SELECT COUNT(*) FROM MEMBERS WHERE MEMBER_NICKNAME = #{memberNickname}
+	</select>
+	
+	<!-- 이메일 중복조회 -->
+	<select id="checkEmail" resultType="String">
+		SELECT COUNT(*) FROM MEMBERS WHERE MEMBER_EMAIL = #{memberEmail}
+	</select>
+	
+	<!-- 전화번호 중복조회 -->
+	<select id="checkNumber" resultType="String">
+		SELECT COUNT(*) FROM MEMBERS WHERE MEMBER_NUMBER = #{memberNumber}
+	</select>
+	
+	<!-- 아이디 찾기 -->
+	<select id="findId" resultType="userDto">
+		SELECT MEMBER_ID FROM MEMBERS WHERE MEMBER_NAME = #{memberName} AND MEMBER_EMAIL = #{memberEmail}	
+	</select>
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="findPw" resultType="userDto">
+		SELECT MEMBER_ID, MEMBER_PW FROM MEMBERS WHERE MEMBER_NAME = #{memberName} AND MEMBER_EMAIL = #{memberEmail}
+	</select>
+	
+	<!-- 닉네임 변경 -->
+	<update id="updateNickname">
+		UPDATE MEMBERS SET MEMBER_NICKNAME = #{memberNickname} WHERE MEMBER_CODE = #{memberCode}
+	</update>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="updatePw">
+		UPDATE MEMBERS SET MEMBER_PW = #{memberPw} WHERE MEMBER_ID = #{memberId}
+	</update>
+	
+	<!-- 이메일 변경 -->
+	<update id="updateEmail">
+		UPDATE MEMBERS SET MEMBER_EMAIL = #{memberEmail} WHERE MEMBER_ID = #{memberId}
+	</update>
+	
+	<!-- 이메일 변경 -->
+	<update id="updateNumber">
+		UPDATE MEMBERS SET MEMBER_NUMBER = #{memberNumber} WHERE MEMBER_ID = #{memberId}
+	</update>
+	
+	<!-- 회원탈퇴 -->
+	<delete id="deleteMember">
+		DELETE FROM MEMBERS WHERE MEMBER_CODE = #{memberCode}
+	</delete>
+	
+	<!-- 기프티콘 교환을 위한 resultMap 생성 -->
+	<resultMap type="userDto" id="userDtoRm">
+	<id column="MEMBER_CODE" property="memberCode"/>
+    <result column="MEMBER_ID" property="memberId"/>
+    <result column="MEMBER_PW" property="memberPw"/>
+    <result column="MEMBER_NAME" property="memberName"/>
+    <result column="MEMBER_NICKNAME" property="memberNickname"/>
+    <result column="MEMBER_EMAIL" property="memberEmail"/>
+    <result column="MEMBER_NUMBER" property="memberNumber"/>
+    <result column="MEMBER_DATE" property="memberDate"/>
+    <result column="HOLD_POINT" property="holdPoint"/>
+	</resultMap>
+	
+	<resultMap type="gifticonDto" id="gifticonDtoRm">
+	<id column="GIFTICON_CODE" property="gifticonCode"/>
+	<result column="BRAND_CODE" property="brandCode"/>
+	<result column="MENU_CODE" property="menuCode"/>
+	<result column="GIFTICON_NAME" property="gifticonName"/>
+	<result column="GIFTICON_IMG" property="gifticonImg"/>
+	<result column="GIFTICON_PRICE" property="gifticonPrice"/>
+	<result column="GIFTICON_DATE" property="gifticonDate"/>
+	</resultMap>
+	
+	<resultMap type="gifticonExchangeDto" id="gifticonExchangeDtoRm">
+	<id column="MEMBER_CODE" property="memberCode"/>
+	<result column="GIFTICON_EXCODE" property="gifticonExcode"/>
+	<result column="GIFTICON_CODE" property="gifticonCode"/>
+	<result column="GIFTICON_NUMBER" property="gifticonNumber"/>
+	<result column="GIFTICON_EXDATE" property="gifticonExdate"/>
+	</resultMap>
+	
+	<resultMap type="userVo" id="userVoRm">
+		<collection property="userDto" resultMap="userDtoRm"></collection>
+		<collection property="gifticonDto" resultMap="gifticonDtoRm"></collection>
+		<collection property="gifticonExchangeDto" resultMap="gifticonExchangeDtoRm"></collection>
+	</resultMap>
+	
+	<!-- 기프티콘 보유 조회 -->
+	<select id="userGifticonMulti" resultMap="userVoRm">
+		SELECT 
+		    MEMBERS.MEMBER_CODE,
+		    GIFTICON_EXCHANGE.GIFTICON_EXCODE,
+		    GIFTICON_EXCHANGE.GIFTICON_CODE,
+		    GIFTICON_EXCHANGE.GIFTICON_NUMBER,
+		    TO_CHAR(GIFTICON_EXCHANGE.GIFTICON_EXDATE,'YYYY"년" MM"월" DD"일" HH24"시" MI"분"') AS GIFTICON_EXDATE,
+		    GIFTICON.BRAND_CODE,
+		    GIFTICON.MENU_CODE,
+		    GIFTICON.GIFTICON_NAME,
+		    GIFTICON.GIFTICON_IMG,
+		    GIFTICON.GIFTICON_PRICE,
+		    GIFTICON.GIFTICON_DATE
+		FROM MEMBERS
+		INNER JOIN GIFTICON_EXCHANGE ON MEMBERS.MEMBER_CODE = GIFTICON_EXCHANGE.MEMBER_CODE
+		INNER JOIN GIFTICON ON GIFTICON_EXCHANGE.GIFTICON_CODE = GIFTICON.GIFTICON_CODE
+		WHERE MEMBERS.MEMBER_CODE = #{userDto.memberCode}
+	</select>
+	
+	<!-- 기프티콘 교환 후 포인트 수정 -->
+   	<update id="updatePoint">
+		UPDATE MEMBERS SET HOLD_POINT = #{holdPoint} WHERE MEMBER_CODE = #{memberCode}  
+	</update>
+	
+</mapper>
