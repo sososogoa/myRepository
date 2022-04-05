@@ -9,6 +9,7 @@
 
 * 이메일 인증
   * email-context.xml
+  ```c
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="port" value="587" />
         <property name="username" value="" />
@@ -23,7 +24,9 @@
             </props>
         </property>
     </bean>
-AjaxController.java
+   ```
+  * AjaxController.java
+  ```c
 	@RequestMapping("sendEmail.do")
 	@ResponseBody
 	public String sendEmail(@ModelAttribute("mail") String mail) throws Exception {
@@ -47,8 +50,10 @@ AjaxController.java
 		String jsonOut = jsonObj.toString();
 		return jsonOut;
 	}
+	```
 * 문자메시지 인증
   * UserServiceImpl.java
+  ```c
 	public void certifiedPhoneNumber(String userPhoneNumber, String key) { 
 		String api_key = ""; 
 		String api_secret = "";
@@ -69,9 +74,10 @@ AjaxController.java
 			System.out.println(e.getCode()); 
 		} 
 	}
-	
+	```
 * 파일업로드
   * AjaxController.java
+  ```c
 	@RequestMapping("fileUpload.do")
 	public void fileUpload(@RequestParam("uploadFile") MultipartFile uploadFile, @RequestParam("filePath") String filePath, HttpServletResponse response) throws IOException {
 		
@@ -99,3 +105,4 @@ AjaxController.java
 		// ajax 데이터 수신용
 		response.getWriter().print(fileName);
 	}
+```
