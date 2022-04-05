@@ -1,14 +1,14 @@
-헝픽
-프로젝트 소개
-작업일자 : 2021.12.27 ~ 2022.02.25
-시작 기획은 패스트푸드를 '다나와' 사이트와 같이 제품을 비교하며 구매를 중개할 수 있는 사이트를 기획했으나 배달 앱의 연동과 실시간 결제 등 구현에 어려움이 있어 기획을 변경하였습니다. 해당 사이트에는 각종 브랜드의 제품들이 나열되어있고 인증이 완료된 사용자가 해당 제품에 대한 리뷰를 남기면 관리자는 승인 및 거절을 할 수 있습니다. 리뷰가 승인되면 사용자에게 포인트가 지급됩니다. 지급된 포인트로 사이트에서 기프티콘(실제로 발행하는 기프티콘이 아님)을 교환할 수 있습니다. 이외에 관리자의 공지사항, 관리자와 사용자의 Q&A 게시판 등이 있습니다.
-빌드 전 테이블 생성과 임시 데이터 생성
-Table.sql과 TemporaryData.sql을 통해 테이블과 초기에 필요한 임시 데이터를 생성할 수 있습니다
-오픈 소스
-해당 기능들은 오픈 소스를 이용하였습니다.
+# 헝픽
+## 프로젝트 소개
+* 작업일자 : 2021.12.27 ~ 2022.02.25
+* 시작 기획은 패스트푸드를 '다나와' 사이트와 같이 제품을 비교하며 구매를 중개할 수 있는 사이트를 기획했으나 배달 앱의 연동과 실시간 결제 등 구현에 어려움이 있어 기획을 변경하였습니다. 해당 사이트에는 각종 브랜드의 제품들이 나열되어있고 인증이 완료된 사용자가 해당 제품에 대한 리뷰를 남기면 관리자는 승인 및 거절을 할 수 있습니다. 리뷰가 승인되면 사용자에게 포인트가 지급됩니다. 지급된 포인트로 사이트에서 기프티콘(실제로 발행하는 기프티콘이 아님)을 교환할 수 있습니다. 이외에 관리자의 공지사항, 관리자와 사용자의 Q&A 게시판 등이 있습니다.
+## 빌드 전 테이블 생성과 임시 데이터 생성
+* Table.sql과 TemporaryData.sql을 통해 테이블과 초기에 필요한 임시 데이터를 생성할 수 있습니다
+# 오픈 소스
+* 해당 기능들은 오픈 소스를 이용하였습니다.
 
-이메일 인증
-email-context.xml
+* 이메일 인증
+  * email-context.xml
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="port" value="587" />
         <property name="username" value="" />
@@ -47,8 +47,8 @@ AjaxController.java
 		String jsonOut = jsonObj.toString();
 		return jsonOut;
 	}
-문자메시지 인증
-UserServiceImpl.java
+* 문자메시지 인증
+  * UserServiceImpl.java
 	public void certifiedPhoneNumber(String userPhoneNumber, String key) { 
 		String api_key = ""; 
 		String api_secret = "";
@@ -69,8 +69,9 @@ UserServiceImpl.java
 			System.out.println(e.getCode()); 
 		} 
 	}
-파일업로드
-AjaxController.java
+	
+* 파일업로드
+  * AjaxController.java
 	@RequestMapping("fileUpload.do")
 	public void fileUpload(@RequestParam("uploadFile") MultipartFile uploadFile, @RequestParam("filePath") String filePath, HttpServletResponse response) throws IOException {
 		
